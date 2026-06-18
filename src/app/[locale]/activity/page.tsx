@@ -201,13 +201,6 @@ export default function ActivityPage() {
         <div className="rounded-xl border border-zinc-200 bg-white overflow-hidden dark:border-zinc-800 dark:bg-zinc-950">
           {isLoading ? (
             <ActivitySkeleton />
-          ) : isError ? (
-            <div className="p-6">
-              <QueryError
-                message="Failed to load activity. Check your connection and try again."
-                onRetry={handleRetry}
-              />
-            </div>
           ) : paginatedActivity.length === 0 ? (
             <div className="p-6">
               <EmptyState

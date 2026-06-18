@@ -244,7 +244,11 @@ function BalancesCard({ address, horizonUrl }: { address: string; horizonUrl: st
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <div role="status" aria-label="Loading balances" className="divide-y divide-zinc-100 dark:divide-zinc-800">
+          <div
+            role="status"
+            aria-label="Loading balances"
+            className="divide-y divide-zinc-100 dark:divide-zinc-800"
+          >
             {Array.from({ length: 3 }).map((_, i) => (
               <div key={i} className="flex items-center justify-between py-3">
                 <div className="flex items-center gap-3">
@@ -258,11 +262,6 @@ function BalancesCard({ address, horizonUrl }: { address: string; horizonUrl: st
               </div>
             ))}
           </div>
-        ) : isError ? (
-          <QueryError
-            message="Failed to load balances from Horizon."
-            onRetry={() => refetch()}
-          />
         ) : !balances || balances.length === 0 ? (
           <EmptyState
             icon={Wallet}
@@ -387,14 +386,8 @@ function TransactionHistoryCard({
           <button
             type="button"
             onClick={exportCsv}
-            disabled={payments.length === 0 || isLoading || isError}
-            title={
-              isError
-                ? "Cannot export — data failed to load"
-                : payments.length === 0
-                  ? "No transactions to export"
-                  : undefined
-            }
+            disabled={payments.length === 0 || isLoading}
+            title={payments.length === 0 ? "No transactions to export" : undefined}
             className="inline-flex items-center justify-center rounded-full border border-zinc-300 bg-white px-4 py-2 text-xs font-semibold text-zinc-700 transition hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-200 dark:hover:bg-zinc-900"
           >
             Export CSV
@@ -404,11 +397,6 @@ function TransactionHistoryCard({
       <CardContent>
         {isLoading ? (
           <TransactionsSkeleton />
-        ) : isError ? (
-          <QueryError
-            message="Failed to load transaction history from Horizon."
-            onRetry={() => refetch()}
-          />
         ) : !payments || payments.length === 0 ? (
           <EmptyState
             icon={ArrowUpRight}

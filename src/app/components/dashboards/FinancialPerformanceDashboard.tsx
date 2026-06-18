@@ -366,11 +366,6 @@ export function FinancialPerformanceDashboard({
           <QueryErrorBoundary scope="credit score chart" variant="section">
             {isLoadingScore && !useMockData ? (
               <AnalyticsSkeleton />
-            ) : scoreError && !useMockData ? (
-              <QueryError
-                message="Failed to load credit score data."
-                onRetry={() => refetchScore()}
-              />
             ) : !useMockData && displayCreditScoreData.length === 0 ? (
               <EmptyState
                 icon={BarChart2}
@@ -461,11 +456,6 @@ export function FinancialPerformanceDashboard({
           <QueryErrorBoundary scope="yield chart" variant="section">
             {isLoadingYield && !useMockData ? (
               <AnalyticsSkeleton />
-            ) : yieldError && !useMockData ? (
-              <QueryError
-                message="Failed to load yield data."
-                onRetry={() => refetchYield()}
-              />
             ) : !useMockData && displayYieldData.length === 0 ? (
               <EmptyState
                 icon={BarChart2}

@@ -316,12 +316,7 @@ export default function RemittancesPage() {
       <QueryErrorBoundary scope="remittances table" variant="section">
         <section aria-label="Remittance history">
           {isLoading ? (
-          <RemittancesSkeleton />
-          ) : isError ? (
-            <QueryError
-              message="Failed to load remittances. Check your connection and try again."
-              onRetry={() => refetch()}
-            />
+            <RemittancesSkeleton />
           ) : remittances.length === 0 ? (
             <EmptyState
               icon={SendHorizontal}

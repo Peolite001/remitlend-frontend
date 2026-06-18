@@ -190,13 +190,7 @@ export function LendPageClient() {
       </header>
 
       <QueryErrorBoundary scope="lender overview" variant="section">
-        {poolError ? (
-          <QueryError
-            message="Failed to load pool statistics."
-            onRetry={() => refetchPool()}
-          />
-        ) : (
-          <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             {[
               {
                 label: "Total Pool Size",
@@ -249,173 +243,177 @@ export function LendPageClient() {
                 </div>
               </article>
             ))}
-          </section>
-        )}
+        </section>
       </QueryErrorBoundary>
 
       <QueryErrorBoundary scope="depositor summary" variant="section">
-        {depositorError ? (
-          <QueryError
-            message="Failed to load your depositor portfolio."
-            onRetry={() => refetchDepositor()}
-          />
-        ) : (
         <section className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
-          <article className="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm shadow-zinc-200/50 dark:border-zinc-800 dark:bg-zinc-950 dark:shadow-none">
-            <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">My Deposits</h2>
-            <div className="mt-4 grid gap-4 sm:grid-cols-3">
-              <div className="rounded-2xl bg-zinc-50 p-4 dark:bg-zinc-900">
-                <p className="text-sm text-zinc-500 dark:text-zinc-400">Deposited Amount</p>
-                {depositorLoading ? (
-                  <Skeleton className="mt-2 h-7 w-24" />
-                ) : (
-                  <p className="mt-2 text-xl font-semibold text-zinc-900 dark:text-zinc-50">
-                    {formatCurrency(depositor?.depositAmount ?? 0)}
-                  </p>
-                )}
-              </div>
-              <div className="rounded-2xl bg-zinc-50 p-4 dark:bg-zinc-900">
-                <p className="text-sm text-zinc-500 dark:text-zinc-400">Share of Pool</p>
-                {depositorLoading ? (
-                  <Skeleton className="mt-2 h-7 w-24" />
-                ) : (
-                  <p className="mt-2 text-xl font-semibold text-zinc-900 dark:text-zinc-50">
-                    {formatPercent(depositor?.sharePercent ?? 0)}
-                  </p>
-                )}
-              </div>
-              <div className="rounded-2xl bg-zinc-50 p-4 dark:bg-zinc-900">
-                <p className="text-sm text-zinc-500 dark:text-zinc-400">Estimated Earnings</p>
-                {depositorLoading ? (
-                  <Skeleton className="mt-2 h-7 w-24" />
-                ) : (
-                  <p className="mt-2 text-xl font-semibold text-zinc-900 dark:text-zinc-50">
-                    {formatCurrency(depositor?.estimatedYield ?? 0)}
-                  </p>
-                )}
-              </div>
-            </div>
-          </article>
-          {depositorLoading ? (
-            <DepositWithdrawSkeleton />
-          ) : (
             <article className="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm shadow-zinc-200/50 dark:border-zinc-800 dark:bg-zinc-950 dark:shadow-none">
-              <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
-                Deposit / Withdraw
-              </h2>
-              <div className="mt-4 grid gap-4 sm:grid-cols-2">
-                <form
-                  className="space-y-3 rounded-2xl border border-zinc-200 p-4 dark:border-zinc-800"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    handleDeposit();
-                  }}
-                >
-                  <label
-                    htmlFor="deposit-amount"
-                    className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
-                  >
-                    Deposit Amount
-                  </label>
-                  <input
-                    id="deposit-amount"
-                    type="text"
-                    inputMode="decimal"
-                    min="0"
-                    step="0.0000001"
-                    value={depositAmount}
-                    onChange={(event) => setDepositAmount(sanitizeAmountInput(event.target.value))}
-                    aria-invalid={depositPrecisionError ? true : undefined}
-                    className={`w-full rounded-xl border bg-zinc-50 px-3 py-2 text-sm outline-none focus:border-indigo-500 dark:border-zinc-800 dark:bg-zinc-900 ${
-                      depositPrecisionError ? "border-red-500" : "border-zinc-200"
-                    }`}
-                  />
-                  <p
-                    className={`text-xs ${
-                      depositPrecisionError
-                        ? "text-red-600 dark:text-red-400"
-                        : "text-zinc-500 dark:text-zinc-400"
-                    }`}
-                  >
-                    {depositPrecisionError ?? depositHelper ?? "Up to 7 decimal places supported."}
-                  </p>
-                  <button
-                    id="deposit-submit"
-                    type="submit"
-                    disabled={depositOp.isLoading || !!depositPrecisionError}
-                    aria-describedby={depositOp.isLoading ? "deposit-submit-hint" : undefined}
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    <ArrowUpRight className="h-4 w-4" />
-                    {depositOp.isLoading ? "Depositing..." : "Deposit"}
-                  </button>
-                  {depositOp.isLoading && (
-                    <p id="deposit-submit-hint" className="text-xs text-indigo-600 dark:text-indigo-400">
-                      Deposit in progress — please wait.
+              <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">My Deposits</h2>
+              <div className="mt-4 grid gap-4 sm:grid-cols-3">
+                <div className="rounded-2xl bg-zinc-50 p-4 dark:bg-zinc-900">
+                  <p className="text-sm text-zinc-500 dark:text-zinc-400">Deposited Amount</p>
+                  {depositorLoading ? (
+                    <Skeleton className="mt-2 h-7 w-24" />
+                  ) : (
+                    <p className="mt-2 text-xl font-semibold text-zinc-900 dark:text-zinc-50">
+                      {formatCurrency(depositor?.depositAmount ?? 0)}
                     </p>
                   )}
-                  <OperationProgress transaction={depositOp.transaction} type="deposit" />
-                </form>
-
-                <form
-                  className="space-y-3 rounded-2xl border border-zinc-200 p-4 dark:border-zinc-800"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    handleWithdraw();
-                  }}
-                >
-                  <label
-                    htmlFor="withdraw-amount"
-                    className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
-                  >
-                    Withdraw Amount
-                  </label>
-                  <input
-                    id="withdraw-amount"
-                    type="text"
-                    inputMode="decimal"
-                    min="0"
-                    step="0.0000001"
-                    value={withdrawAmount}
-                    onChange={(event) => setWithdrawAmount(sanitizeAmountInput(event.target.value))}
-                    aria-invalid={withdrawPrecisionError ? true : undefined}
-                    className={`w-full rounded-xl border bg-zinc-50 px-3 py-2 text-sm outline-none focus:border-indigo-500 dark:border-zinc-800 dark:bg-zinc-900 ${
-                      withdrawPrecisionError ? "border-red-500" : "border-zinc-200"
-                    }`}
-                  />
-                  <p
-                    className={`text-xs ${
-                      withdrawPrecisionError
-                        ? "text-red-600 dark:text-red-400"
-                        : "text-zinc-500 dark:text-zinc-400"
-                    }`}
-                  >
-                    {withdrawPrecisionError ??
-                      withdrawHelper ??
-                      "Up to 7 decimal places supported."}
-                  </p>
-                  <button
-                    id="withdraw-submit"
-                    type="submit"
-                    disabled={withdrawalOp.isLoading || !!withdrawPrecisionError}
-                    aria-describedby={withdrawalOp.isLoading ? "withdraw-submit-hint" : undefined}
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-zinc-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-zinc-700 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
-                  >
-                    <ArrowDownLeft className="h-4 w-4" />
-                    {withdrawalOp.isLoading ? "Withdrawing..." : "Withdraw"}
-                  </button>
-                  {withdrawalOp.isLoading && (
-                    <p id="withdraw-submit-hint" className="text-xs text-zinc-500 dark:text-zinc-400">
-                      Withdrawal in progress — please wait.
+                </div>
+                <div className="rounded-2xl bg-zinc-50 p-4 dark:bg-zinc-900">
+                  <p className="text-sm text-zinc-500 dark:text-zinc-400">Share of Pool</p>
+                  {depositorLoading ? (
+                    <Skeleton className="mt-2 h-7 w-24" />
+                  ) : (
+                    <p className="mt-2 text-xl font-semibold text-zinc-900 dark:text-zinc-50">
+                      {formatPercent(depositor?.sharePercent ?? 0)}
                     </p>
                   )}
-                  <OperationProgress transaction={withdrawalOp.transaction} type="withdrawal" />
-                </form>
+                </div>
+                <div className="rounded-2xl bg-zinc-50 p-4 dark:bg-zinc-900">
+                  <p className="text-sm text-zinc-500 dark:text-zinc-400">Estimated Earnings</p>
+                  {depositorLoading ? (
+                    <Skeleton className="mt-2 h-7 w-24" />
+                  ) : (
+                    <p className="mt-2 text-xl font-semibold text-zinc-900 dark:text-zinc-50">
+                      {formatCurrency(depositor?.estimatedYield ?? 0)}
+                    </p>
+                  )}
+                </div>
               </div>
             </article>
-          )}
+            {depositorLoading ? (
+              <DepositWithdrawSkeleton />
+            ) : (
+              <article className="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm shadow-zinc-200/50 dark:border-zinc-800 dark:bg-zinc-950 dark:shadow-none">
+                <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
+                  Deposit / Withdraw
+                </h2>
+                <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                  <form
+                    className="space-y-3 rounded-2xl border border-zinc-200 p-4 dark:border-zinc-800"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      handleDeposit();
+                    }}
+                  >
+                    <label
+                      htmlFor="deposit-amount"
+                      className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
+                    >
+                      Deposit Amount
+                    </label>
+                    <input
+                      id="deposit-amount"
+                      type="text"
+                      inputMode="decimal"
+                      min="0"
+                      step="0.0000001"
+                      value={depositAmount}
+                      onChange={(event) =>
+                        setDepositAmount(sanitizeAmountInput(event.target.value))
+                      }
+                      aria-invalid={depositPrecisionError ? true : undefined}
+                      className={`w-full rounded-xl border bg-zinc-50 px-3 py-2 text-sm outline-none focus:border-indigo-500 dark:border-zinc-800 dark:bg-zinc-900 ${
+                        depositPrecisionError ? "border-red-500" : "border-zinc-200"
+                      }`}
+                    />
+                    <p
+                      className={`text-xs ${
+                        depositPrecisionError
+                          ? "text-red-600 dark:text-red-400"
+                          : "text-zinc-500 dark:text-zinc-400"
+                      }`}
+                    >
+                      {depositPrecisionError ??
+                        depositHelper ??
+                        "Up to 7 decimal places supported."}
+                    </p>
+                    <button
+                      id="deposit-submit"
+                      type="submit"
+                      disabled={depositOp.isLoading || !!depositPrecisionError}
+                      aria-describedby={depositOp.isLoading ? "deposit-submit-hint" : undefined}
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      <ArrowUpRight className="h-4 w-4" />
+                      {depositOp.isLoading ? "Depositing..." : "Deposit"}
+                    </button>
+                    {depositOp.isLoading && (
+                      <p
+                        id="deposit-submit-hint"
+                        className="text-xs text-indigo-600 dark:text-indigo-400"
+                      >
+                        Deposit in progress - please wait.
+                      </p>
+                    )}
+                    <OperationProgress transaction={depositOp.transaction} type="deposit" />
+                  </form>
+
+                  <form
+                    className="space-y-3 rounded-2xl border border-zinc-200 p-4 dark:border-zinc-800"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      handleWithdraw();
+                    }}
+                  >
+                    <label
+                      htmlFor="withdraw-amount"
+                      className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
+                    >
+                      Withdraw Amount
+                    </label>
+                    <input
+                      id="withdraw-amount"
+                      type="text"
+                      inputMode="decimal"
+                      min="0"
+                      step="0.0000001"
+                      value={withdrawAmount}
+                      onChange={(event) =>
+                        setWithdrawAmount(sanitizeAmountInput(event.target.value))
+                      }
+                      aria-invalid={withdrawPrecisionError ? true : undefined}
+                      className={`w-full rounded-xl border bg-zinc-50 px-3 py-2 text-sm outline-none focus:border-indigo-500 dark:border-zinc-800 dark:bg-zinc-900 ${
+                        withdrawPrecisionError ? "border-red-500" : "border-zinc-200"
+                      }`}
+                    />
+                    <p
+                      className={`text-xs ${
+                        withdrawPrecisionError
+                          ? "text-red-600 dark:text-red-400"
+                          : "text-zinc-500 dark:text-zinc-400"
+                      }`}
+                    >
+                      {withdrawPrecisionError ??
+                        withdrawHelper ??
+                        "Up to 7 decimal places supported."}
+                    </p>
+                    <button
+                      id="withdraw-submit"
+                      type="submit"
+                      disabled={withdrawalOp.isLoading || !!withdrawPrecisionError}
+                      aria-describedby={withdrawalOp.isLoading ? "withdraw-submit-hint" : undefined}
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-zinc-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-zinc-700 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+                    >
+                      <ArrowDownLeft className="h-4 w-4" />
+                      {withdrawalOp.isLoading ? "Withdrawing..." : "Withdraw"}
+                    </button>
+                    {withdrawalOp.isLoading && (
+                      <p
+                        id="withdraw-submit-hint"
+                        className="text-xs text-zinc-500 dark:text-zinc-400"
+                      >
+                        Withdrawal in progress - please wait.
+                      </p>
+                    )}
+                    <OperationProgress transaction={withdrawalOp.transaction} type="withdrawal" />
+                  </form>
+                </div>
+              </article>
+            )}
         </section>
-        )}
       </QueryErrorBoundary>
 
       <QueryErrorBoundary scope="loan portfolio" variant="section">
@@ -426,13 +424,7 @@ export function LendPageClient() {
           </p>
 
           <div className="mt-4 space-y-3">
-            {loansError ? (
-              <QueryError
-                message="Failed to load the loan portfolio."
-                onRetry={() => refetchLoans()}
-              />
-            ) : null}
-            {!loansError && isLoading && (
+            {isLoading && (
               <>
                 <Skeleton className="h-[76px] w-full rounded-2xl" />
                 <Skeleton className="h-[76px] w-full rounded-2xl" />
@@ -440,7 +432,6 @@ export function LendPageClient() {
               </>
             )}
             {!isLoading &&
-              !loansError &&
               (loans ?? [])
                 .filter((loan) => loan.status === "active")
                 .slice(0, 8)
@@ -473,7 +464,6 @@ export function LendPageClient() {
                 ))}
 
             {!isLoading &&
-              !loansError &&
               (loans ?? []).filter((loan) => loan.status === "active").length === 0 && (
                 <EmptyState
                   icon={PiggyBank}
@@ -492,11 +482,6 @@ export function LendPageClient() {
               <Skeleton className="h-5 w-40" />
               <Skeleton className="h-[300px] w-full rounded-xl" />
             </div>
-          ) : historyError ? (
-            <QueryError
-              message="Failed to load yield history."
-              onRetry={() => refetchHistory()}
-            />
           ) : chartData.length === 0 ? (
             <EmptyState
               icon={Activity}
