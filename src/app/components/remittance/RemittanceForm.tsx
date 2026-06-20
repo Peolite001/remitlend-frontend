@@ -11,11 +11,7 @@ import { isValidStellarAddress } from "../../utils/stellar";
 import { AlertCircle, Send, Loader } from "lucide-react";
 import { useCreateRemittance } from "../../hooks/useApi";
 import { toast } from "sonner";
-import {
-  AmountInput,
-  getAmountHelperText,
-  getAmountInputError,
-} from "../global_ui/AmountInput";
+import { AmountInput, getAmountHelperText, getAmountInputError } from "../global_ui/AmountInput";
 import { parseAmount } from "../../utils/amount";
 
 interface RemittanceFormProps {

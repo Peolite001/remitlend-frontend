@@ -1,11 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
-import {
-  AmountInput,
-  getAmountInputError,
-  getAmountInputErrorId,
-} from "./AmountInput";
+import { AmountInput, getAmountInputError, getAmountInputErrorId } from "./AmountInput";
 
 describe("AmountInput", () => {
   it("announces precision errors with matching aria-describedby", () => {
@@ -21,7 +17,7 @@ describe("AmountInput", () => {
       />,
     );
 
-    const input = screen.getByLabelText("Amount *");
+    const input = screen.getByLabelText("Amount");
     const error = screen.getByText("USDC supports at most 7 decimal places.");
 
     expect(input).toHaveAttribute("aria-invalid", "true");

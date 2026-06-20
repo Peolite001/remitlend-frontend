@@ -74,7 +74,8 @@ export function getAmountInputErrorId(id: string): string {
 }
 
 interface AmountInputProps
-  extends Omit<
+  extends
+    Omit<
       React.InputHTMLAttributes<HTMLInputElement>,
       "onChange" | "value" | "type" | "min" | "max"
     >,

@@ -21,7 +21,11 @@ jest.mock("../../hooks/useTransactionPreview", () => ({
     isOpen: false,
     show: jest.fn(),
     hide: jest.fn(),
-    data: {},
+    data: {
+      network: "testnet",
+      operations: [],
+      balanceChanges: [],
+    },
     onConfirm: jest.fn(),
   })),
 }));
