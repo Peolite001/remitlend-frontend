@@ -52,13 +52,15 @@ export function mapTransactionError(error: unknown): TransactionErrorDetails {
     normalized.includes("rejected") ||
     normalized.includes("denied") ||
     normalized.includes("cancelled") ||
-    normalized.includes("canceled")
+    normalized.includes("canceled") ||
+    normalized.includes("declined")
   ) {
     return {
       category: "wallet_rejected",
       title: "Transaction cancelled",
       message: "You cancelled the signing request in your wallet.",
-      guidance: "No funds moved. You can review details and submit again when ready.",
+      guidance:
+        "No funds moved. You can review details and submit again when ready.",
       retryable: true,
       cancelledByUser: true,
     };
@@ -73,7 +75,8 @@ export function mapTransactionError(error: unknown): TransactionErrorDetails {
       category: "network_timeout",
       title: "Network issue",
       message: "The network request timed out or could not be completed.",
-      guidance: "Check connectivity and retry. If it keeps failing, try again in a few minutes.",
+      guidance:
+        "Check connectivity and retry. If it keeps failing, try again in a few minutes.",
       retryable: true,
       cancelledByUser: false,
     };
@@ -102,7 +105,8 @@ export function mapTransactionError(error: unknown): TransactionErrorDetails {
       category: "score_too_low",
       title: "Loan request not eligible",
       message: "Your credit score does not meet the minimum requirement.",
-      guidance: "Repay active loans on time and retry after your score improves.",
+      guidance:
+        "Repay active loans on time and retry after your score improves.",
       retryable: false,
       cancelledByUser: false,
     };
@@ -128,7 +132,8 @@ export function mapTransactionError(error: unknown): TransactionErrorDetails {
       category: "onchain_failure",
       title: "Transaction failed on-chain",
       message: "The transaction was submitted but did not succeed on-chain.",
-      guidance: "Check the transaction hash details and adjust inputs before retrying.",
+      guidance:
+        "Check the transaction hash details and adjust inputs before retrying.",
       retryable: false,
       cancelledByUser: false,
     };
@@ -138,7 +143,8 @@ export function mapTransactionError(error: unknown): TransactionErrorDetails {
     category: "unknown",
     title: "Transaction failed",
     message: rawMessage,
-    guidance: "Try again, or adjust the amount and wallet state before retrying.",
+    guidance:
+      "Try again, or adjust the amount and wallet state before retrying.",
     retryable: true,
     cancelledByUser: false,
   };
@@ -167,7 +173,7 @@ export async function pollTransactionStatus(
   {
     horizonUrl = process.env.NEXT_PUBLIC_HORIZON_URL ?? DEFAULT_HORIZON_URL,
     intervalMs = 2500,
-    timeoutMs = 30_000,
+    timeoutMs = 30000,
     signal,
   }: PollTransactionOptions = {},
 ): Promise<PollTransactionResult> {
