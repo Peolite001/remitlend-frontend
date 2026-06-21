@@ -21,9 +21,6 @@ The frontend is a modern React application built with Next.js that enables:
 - **Styling**: Tailwind CSS 4 (Custom design system, native CSS variables, class-based dark mode)
 - **Wallet Integration**: Freighter Wallet API (`@stellar/freighter-api`) (fully integrated)
 - **State Management**: Zustand stores (theme, wallet, user data, UI layout, gamification, and toasts)
- - **Styling**: Tailwind CSS 4 (Custom design system, native CSS variables, class-based dark mode)
- - **Wallet Integration**: Freighter Wallet API (`@stellar/freighter-api`) — fully integrated (Freighter). Multi-wallet support (Albedo, Rabet, xBull, etc.) is planned and listed under the roadmap.
- - **State Management**: Implemented with Zustand stores (located in `src/app/stores/`) powering theme, wallet, user data, UI layout, gamification, and toasts.
 
 ## Getting Started
 
@@ -99,6 +96,7 @@ frontend/
 ### Core Implemented Features
 
 #### Borrower Dashboard
+
 - [x] **Wallet Connection Interface**: Integration with Freighter wallet for secure actions
 - [x] **Credit Score Display**: Dynamic visual representation of credit bands and credit scores
 - [x] **Remittance NFT Minting**: Minting on-chain credit-backed NFTs representing remittance history
@@ -108,6 +106,7 @@ frontend/
 - [x] **Transaction History**: Real-time listing of past activities and blockchain transactions
 
 #### Lender Dashboard
+
 - [x] **Pool Liquidity Overview**: Detailed metrics on lending pools, deposits, and utilization rate
 - [x] **Deposit/Withdraw Interface**: Simple interfaces to supply liquidity to the lending pools or withdraw funds
 - [x] **Loan Approval Queue**: Queue of open loan requests for lenders to review and fund
@@ -115,6 +114,7 @@ frontend/
 - [x] **Portfolio Analytics**: Financial charts (powered by Recharts) showing performance and asset allocation
 
 #### Shared & Global Features
+
 - [x] **Real-Time Transaction Status**: Global feedback on blockchain operations with transaction progress trackers
 - [x] **Notification System**: Server-Sent Events (SSE) notification stream updating in-app events immediately
 - [x] **Multi-Language Support**: Full internationalization and localization using `next-intl` (English ready)
@@ -123,6 +123,7 @@ frontend/
 - [x] **Gamification System**: Borrower achievements, dynamic level-ups, and XP rewards (RemitLend Kingdom)
 
 ### Future Roadmap (Planned)
+
 - [ ] **Multi-wallet support**: Integration of Stellar Wallet Kit (Albedo, Rabet, xBull support)
 - [ ] **Stablecoin support**: Native compatibility for EURC, USDC, and other fiat-pegged stablecoins
 - [ ] **Advanced credit scoring**: Off-chain ML-based scoring pipelines using larger payment histories
@@ -163,6 +164,7 @@ import { Spinner } from "@/app/components/global_ui/Spinner";
 The project uses **Tailwind CSS 4** for styling with a fully implemented custom color scheme and dark mode support.
 
 **Key Features:**
+
 - **Native CSS Custom Properties**: Theme colors are mapped using CSS variables (`--background`, `--foreground`, etc.) defined in `src/app/[locale]/globals.css`.
 - **Dark Mode Support**: Fully operational class-based dark mode. A script block runs synchronously on page load to prevent a flash of incorrect color scheme.
 - **Fluid Transitions**: Global utility transitions for background-colors and text-colors.
@@ -192,6 +194,7 @@ Global styles are defined in `src/app/[locale]/globals.css`:
 The frontend integrates directly with Freighter wallet using `@stellar/freighter-api` for connecting accounts, verifying network status, and signing transactions.
 
 **Key Integration Details:**
+
 - **Auto-reconnect**: Optional restoration of user sessions on page reload.
 - **Network Synchronization**: Detects if the wallet is on an unsupported network or mismatching target environment (e.g. mainnet vs. testnet) and provides in-app warning states.
 - **Horizon Sync**: Automatic balance queries mapping XLM and credit assets to the user's view.
@@ -210,7 +213,7 @@ if (freighterReady.isConnected) {
 
   if (address) {
     console.log("Connected address:", address);
-    
+
     // Sign a transaction XDR
     const signedTxXdr = await signTransaction(unsignedTxXdr, {
       networkPassphrase: "Test SDF Network ; September 2015",
@@ -307,6 +310,7 @@ Next.js 16 App Router using file-based routing with localization wrapper via `ne
 - `/[locale]/repay/[loanId]` - Repayment form page to submit loan payments
 - `/[locale]/lend` - Lender dashboard detailing pool metrics, yield charts, and deposit/withdrawal queues
 - `/[locale]/activity` - System transaction activity log
+- `/[locale]/analytics` - Analytics dashboard with metrics and charts
 - `/[locale]/kingdom` - Gamification page displaying levels, badges, and user tasks
 - `/[locale]/settings` - General settings panel (theme toggles, languages)
 - `/[locale]/ui-demo` - Sandbox demonstrating reusable UI components
