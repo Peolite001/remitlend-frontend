@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useUserStore } from "@/store/useUserStore";
+import { useUserStore } from "@/stores/useUserStore";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export function Header() {
-  const { user } = useUserStore();
+  const user = useUserStore((s) => s.user);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
@@ -21,7 +21,10 @@ export function Header() {
                 {user.name || user.email}
               </span>
               <Avatar className="h-8 w-8">
-                <AvatarImage src={user.avatarUrl} alt={user.name || user.email} />
+                <AvatarImage
+                  src={user.avatarUrl}
+                  alt={user.name || user.email}
+                />
                 <AvatarFallback>
                   {(user.name || user.email).slice(0, 2).toUpperCase()}
                 </AvatarFallback>
