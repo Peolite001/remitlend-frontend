@@ -20,6 +20,147 @@ import {
 import { LoanStatusBadge, type LoanStatus } from "../components/ui/LoanStatusBadge";
 import { useUserStore } from "../stores/useUserStore";
 import { isJwtExpired, logoutUser, SessionExpiredError } from "../lib/session";
+/**
+ * hooks/useApi.ts
+ *
+ * Custom hooks for data fetching using TanStack Query.
+ */
+
+// ─── Token helper ────────────────────────────────────────────────────────────
+
+export function getToken(): string | null {
+  return useUserStore.getState().authToken;
+}
+
+// ─── Query key factory ────────────────────────────────────────────────────────
+
+export const queryKeys = {
+  loans: {
+    all: () => ["loans"] as const,
+    detail: (id: string) => ["loans", id] as const,
+    config: () => ["loans", "config"] as const,
+    borrowerPage: (address: string, params: Record<string, unknown>) =>
+      ["loans", "borrower", address, params] as const,
+  },
+  remittances: {
+    all: () => ["remittances"] as const,
+    detail: (id: string) => ["remittances", id] as const,
+    page: (params: Record<string, unknown>) =>
+      ["remittances", "page", params] as const,
+  },
+  user: {
+    profile: () => ["user", "profile"] as const,
+    balance: () => ["user", "balance"] as const,
+  },
+  notifications: {
+    all: () => ["notifications"] as const,
+  },
+  borrowerLoans: {
+    byAddress: (address: string) => ["borrowerLoans", address] as const,
+  },
+  pool: {
+    stats: () => ["pool", "stats"] as const,
+    depositor: (address: string) => ["pool", "depositor", address] as const,
+  },
+} as const;
+
+// ─── Base fetch helper ──────────────────────────────────────────────────────
+
+async function apiFetch<T>(
+  path: string,
+  options: RequestInit = {},
+): Promise<T> {
+  const headers = new Headers(options.headers);
+
+  // Only set JSON Content-Type when NOT sending FormData
+  // (browser must set multipart boundary automatically)
+  const isFormData = options.body instanceof FormData;
+  if (!isFormData && !headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json");
+  }
+
+  const token = getToken();
+  if (token) {
+    if (isJwtExpired(token)) {
+      logoutUser("expired");
+      throw new SessionExpiredError();
+    }
+    if (!headers.has("Authorization")) {
+      headers.set("Authorization", `Bearer ${token}`);
+    }
+  }
+
+  const response = await fetch(`${API_URL}${path}`, { ...options, headers });
+
+  if (response.status === 401 && token) {
+    const error = await response
+      .json()
+      .catch(() => ({ message: "Session expired. Please sign in again." }));
+    logoutUser("expired");
+    throw new SessionExpiredError(error.message);
+  }
+
+  if (!response.ok) {
+    const error = await response
+      .json()
+      .catch(() => ({ message: response.statusText }));
+    throw new Error(
+      error.message ?? `Request failed with status ${response.status}`,
+    );
+  }
+
+  return response.json() as Promise<T>;
+}
+
+// ─── Upload helper with real XHR progress ──────────────────────────────────
+
+export interface UploadOptions {
+  onProgress?: (percent: number) => void;
+}
+
+export async function apiUpload<T>(
+  path: string,
+  formData: FormData,
+  options: UploadOptions = {},
+): Promise<T> {
+  const token = getToken();
+  const { onProgress } = options;
+
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", `${API_URL}${path}`, true);
+
+    if (token) {
+      xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+    }
+    // DO NOT set Content-Type — browser sets the multipart boundary automatically
+
+    if (onProgress) {
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable) {
+          onProgress(Math.round((event.loaded / event.total) * 100));
+        }
+      };
+    }
+
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try {
+          resolve(JSON.parse(xhr.responseText));
+        } catch {
+          resolve(xhr.responseText as T);
+        }
+      } else {
+        reject(new Error(xhr.statusText || `HTTP ${xhr.status}`));
+      }
+    };
+
+    xhr.onerror = () => reject(new Error("Network error"));
+    xhr.ontimeout = () => reject(new Error("Request timeout"));
+
+    xhr.send(formData);
+  });
+}
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
