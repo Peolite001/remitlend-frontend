@@ -2,15 +2,6 @@
  * stores/useUserStore.ts
  *
  * Zustand store for authenticated user data.
- *
- * Responsibilities:
- *  - Hold the currently authenticated user profile (id, email, kycVerified, etc.)
- *  - Track authentication state (isAuthenticated, isLoading, error)
- *  - Provide actions to set / clear the user (login / logout)
- *
- * Design decision: server-fetched data lives in TanStack Query (useApi.ts).
- * This store holds the runtime session state so any component can read it
- * without prop-drilling or re-fetching.
  */
 
 import { create } from "zustand";
@@ -22,33 +13,25 @@ import { useGamificationStore } from "./useGamificationStore";
 export interface User {
   id: string;
   email: string;
+  name?: string;
+  avatarUrl?: string;
   walletAddress?: string;
   kycVerified: boolean;
-  /** ISO 8601 timestamp of when the session was established */
   sessionStartedAt?: string;
 }
 
 interface UserState {
-  /** Authenticated user, or null when logged out */
   user: User | null;
-  /** JWT token for API authentication */
   authToken: string | null;
-  /** True while an auth operation (login/logout/refresh) is in progress */
   isLoading: boolean;
-  /** Error message from the last failed auth operation */
   error: string | null;
-  /** Derived convenience flag */
   isAuthenticated: boolean;
 }
 
 interface UserActions {
-  /** Call this after a successful login or session hydration */
   setUser: (user: User) => void;
-  /** Store the JWT token received after login */
   setAuthToken: (token: string | null) => void;
-  /** Call this on logout or session expiry — clears all user data */
   clearUser: () => void;
-  /** Call this to update individual fields (e.g. after KYC verification) */
   updateUser: (partial: Partial<User>) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
@@ -66,7 +49,7 @@ const initialState: UserState = {
   isAuthenticated: false,
 };
 
-// ─── Store ────────────────────────────────────────────────────────────────────
+// ─── Store ───────────────────────────────────────────────────────────────────
 
 export const useUserStore = create<UserStore>()(
   devtools(
@@ -88,7 +71,8 @@ export const useUserStore = create<UserStore>()(
 
         clearUser: () => set({ ...initialState }, false, "user/clearUser"),
 
-        setAuthToken: (authToken) => set({ authToken }, false, "user/setAuthToken"),
+        setAuthToken: (authToken) =>
+          set({ authToken }, false, "user/setAuthToken"),
 
         updateUser: (partial) => {
           if (partial.kycVerified) {
@@ -105,11 +89,11 @@ export const useUserStore = create<UserStore>()(
 
         setLoading: (isLoading) => set({ isLoading }, false, "user/setLoading"),
 
-        setError: (error) => set({ error, isLoading: false }, false, "user/setError"),
+        setError: (error) =>
+          set({ error, isLoading: false }, false, "user/setError"),
       }),
       {
         name: "remitlend-user",
-        // Only persist the user object — not transient loading/error state
         partialize: (state) => ({
           user: state.user,
           authToken: state.authToken,
@@ -121,12 +105,11 @@ export const useUserStore = create<UserStore>()(
   ),
 );
 
-// ─── Selectors ────────────────────────────────────────────────────────────────
-// Exporting selectors avoids inline arrow functions in components
-// which would bypass Zustand's shallow-equality bailout.
+// ─── Selectors ──────────────────────────────────────────────────────────────
 
 export const selectUser = (state: UserStore) => state.user;
 export const selectAuthToken = (state: UserStore) => state.authToken;
-export const selectIsAuthenticated = (state: UserStore) => state.isAuthenticated;
+export const selectIsAuthenticated = (state: UserStore) =>
+  state.isAuthenticated;
 export const selectUserIsLoading = (state: UserStore) => state.isLoading;
 export const selectUserError = (state: UserStore) => state.error;
